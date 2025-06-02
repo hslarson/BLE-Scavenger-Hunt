@@ -1,7 +1,8 @@
 buildscript {
     repositories {
+        mavenCentral()
         google()
-        jcenter()
+        maven { url 'https://plugins.gradle.org/m2/' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.4.2'
@@ -10,11 +11,9 @@ buildscript {
 
 allprojects {
     repositories {
+        mavenCentral()
         google()
-        jcenter()
-        maven {
-            url  "http://dl.bintray.com/steppschuh/Markdown-Generator"
-        }
+        maven { url 'https://plugins.gradle.org/m2/' }
     }
 }
 
