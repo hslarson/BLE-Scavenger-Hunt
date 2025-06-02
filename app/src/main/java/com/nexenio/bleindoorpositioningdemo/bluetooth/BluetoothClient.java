@@ -78,9 +78,7 @@ public class BluetoothClient {
         instance.scanningSubscription = instance.rxBleClient.scanBleDevices(scanSettings)
                 .subscribe(new Observer<ScanResult>() {
                     @Override
-                    public void onCompleted() {
-
-                    }
+                    public void onCompleted() {}
 
                     @Override
                     public void onError(Throwable e) {
@@ -128,6 +126,7 @@ public class BluetoothClient {
         if (advertisingPacket != null) {
             Beacon beacon = BeaconManager.getBeacon(macAddress, advertisingPacket);
             if (beacon instanceof IBeacon && !beacon.hasLocation()) {
+                Log.d(TAG, "IBeacon detected: Minor=" + ((IBeacon) beacon).getMinor() + " RSSI=" + scanResult.getRssi());
                 beacon.setLocationProvider(createDebuggingLocationProvider((IBeacon) beacon));
             }
         }

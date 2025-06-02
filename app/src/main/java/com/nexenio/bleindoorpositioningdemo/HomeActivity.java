@@ -1,5 +1,12 @@
 package com.nexenio.bleindoorpositioningdemo;
 
+// === New imports ===
+import android.Manifest;
+import android.os.Build;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+// === End new imports ===
+
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -105,6 +112,8 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         if (!BluetoothClient.isBluetoothEnabled()) {
             requestBluetooth();
         }
+        requestBluetoothPermissionsIfNeeded();
+
         BluetoothClient.startScanning();
     }
 
@@ -127,7 +136,7 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
                     Log.d(TAG, "Location permission granted");
                     AndroidLocationProvider.startRequestingLocationUpdates();
                 } else {
-                    Log.d(TAG, "Location permission not granted. Wut?");
+                    Log.d(TAG, "Location permission not granted.");
                 }
                 break;
             }
@@ -178,6 +187,17 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
             }
         });
         snackbar.show();
+    }
+
+    private void requestBluetoothPermissionsIfNeeded() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { // Android 12+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{
+                        Manifest.permission.BLUETOOTH_SCAN,
+                        Manifest.permission.BLUETOOTH_CONNECT
+                }, 2);
+            }
+        }
     }
 
 }
