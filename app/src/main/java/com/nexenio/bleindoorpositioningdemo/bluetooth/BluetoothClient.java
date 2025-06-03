@@ -125,8 +125,8 @@ public class BluetoothClient {
 
         if (advertisingPacket != null) {
             Beacon beacon = BeaconManager.getBeacon(macAddress, advertisingPacket);
-            if (beacon instanceof IBeacon && !beacon.hasLocation()) {
-                Log.d(TAG, "IBeacon detected: Minor=" + ((IBeacon) beacon).getMinor() + " RSSI=" + scanResult.getRssi());
+//            if (beacon instanceof IBeacon && !beacon.hasLocation()) {
+            if (beacon instanceof IBeacon) {
                 beacon.setLocationProvider(createDebuggingLocationProvider((IBeacon) beacon));
             }
         }
@@ -134,91 +134,56 @@ public class BluetoothClient {
 
     private static IBeaconLocationProvider<IBeacon> createDebuggingLocationProvider(IBeacon iBeacon) {
         final Location beaconLocation = new Location();
+
+        // Set Beacon 1 as the origin
+        final double originLatitude = 34.417921;   // <-- Replace with your Beacon 1 latitude
+        final double originLongitude = -119.855570;  // <-- Replace with your Beacon 1 longitude
+
+        // Conversion factors
+        final double LAT_SHIFT_PER_METER = 0.0000089;  // meters North -> Latitude
+        final double LON_SHIFT_PER_METER = 0.0000113;  // meters East -> Longitude
+
+        // Define your beacon offsets (in meters) relative to beacon 1
+        double northOffset = 0;
+        double eastOffset = 0;
+
         switch (iBeacon.getMinor()) {
             case 1: {
-                beaconLocation.setLatitude(52.512437);
-                beaconLocation.setLongitude(13.391124);
-                beaconLocation.setAltitude(36);
+                northOffset = 0;
+                eastOffset = 0;
                 break;
             }
             case 2: {
-                beaconLocation.setLatitude(52.512411788476356);
-                beaconLocation.setLongitude(13.390875654442985);
-                beaconLocation.setElevation(2.65);
-                beaconLocation.setAltitude(36);
+                northOffset = -4.979478864;
+                eastOffset = 1.522379466;
                 break;
             }
             case 3: {
-                beaconLocation.setLatitude(52.51240486636751);
-                beaconLocation.setLongitude(13.390770270005437);
-                beaconLocation.setElevation(2.65);
-                beaconLocation.setAltitude(36);
+                northOffset = -5.798454618;
+                eastOffset = -0.7119607042;
                 break;
             }
             case 4: {
-                beaconLocation.setLatitude(52.512426);
-                beaconLocation.setLongitude(13.390887);
-                beaconLocation.setElevation(2);
-                beaconLocation.setAltitude(36);
+                northOffset = -1.383763043;
+                eastOffset = -2.715787886;
                 break;
             }
             case 5: {
-                beaconLocation.setLatitude(52.512347534813834);
-                beaconLocation.setLongitude(13.390780437281524);
-                beaconLocation.setElevation(2.9);
-                beaconLocation.setAltitude(36);
-                break;
-            }
-            case 12: {
-                beaconLocation.setLatitude(52.51239708899507);
-                beaconLocation.setLongitude(13.390878261276518);
-                beaconLocation.setElevation(2.65);
-                beaconLocation.setAltitude(36);
-                break;
-            }
-            case 13: {
-                beaconLocation.setLatitude(52.51242692608082);
-                beaconLocation.setLongitude(13.390872969910035);
-                beaconLocation.setElevation(2.65);
-                beaconLocation.setAltitude(36);
-                break;
-            }
-            case 14: {
-                beaconLocation.setLatitude(52.51240825552749);
-                beaconLocation.setLongitude(13.390821867681456);
-                beaconLocation.setElevation(2.65);
-                beaconLocation.setAltitude(36);
-                break;
-            }
-            case 15: {
-                beaconLocation.setLatitude(52.51240194910502);
-                beaconLocation.setLongitude(13.390725856632926);
-                beaconLocation.setElevation(2.65);
-                beaconLocation.setAltitude(36);
-                break;
-            }
-            case 16: {
-                beaconLocation.setLatitude(52.512390301005595);
-                beaconLocation.setLongitude(13.39077285305359);
-                beaconLocation.setElevation(2.65);
-                beaconLocation.setAltitude(36);
-                break;
-            }
-            case 17: {
-                beaconLocation.setLatitude(52.51241817994876);
-                beaconLocation.setLongitude(13.390767908948872);
-                beaconLocation.setElevation(2.65);
-                beaconLocation.setAltitude(36);
-                break;
-            }
-            case 18: {
-                beaconLocation.setLatitude(52.51241494408066);
-                beaconLocation.setLongitude(13.390923696709294);
-                beaconLocation.setElevation(2.65);
-                beaconLocation.setAltitude(36);
+                northOffset = -2.939708075;
+                eastOffset = -1.909068746;
                 break;
             }
         }
+
+        // Convert (north, east) offset to lat/lon
+        double latitude = originLatitude + (northOffset * LAT_SHIFT_PER_METER);
+        double longitude = originLongitude + (eastOffset * LON_SHIFT_PER_METER);
+
+        beaconLocation.setLatitude(latitude);
+        beaconLocation.setLongitude(longitude);
+        beaconLocation.setElevation(2.65); // Can adjust per beacon if you want
+        beaconLocation.setAltitude(36);    // Arbitrary, constant for now
+
         return new IBeaconLocationProvider<IBeacon>(iBeacon) {
             @Override
             protected void updateLocation() {
