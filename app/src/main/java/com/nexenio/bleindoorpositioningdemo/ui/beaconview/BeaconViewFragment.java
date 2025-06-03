@@ -38,7 +38,7 @@ public abstract class BeaconViewFragment extends Fragment {
 
     // TODO: Remove legacy uuid once all beacons are updated
     // protected IBeaconFilter uuidFilter = new IBeaconFilter(IndoorPositioningAdvertisingPacket.INDOOR_POSITIONING_UUID);
-    protected IBeaconFilter uuidFilter = new IBeaconFilter(IndoorPositioningAdvertisingPacket.INDOOR_POSITIONING_UUID, UUID.fromString("acfd065e-c3c0-11e3-9bbe-1a514932ac01"));
+    protected IBeaconFilter uuidFilter = new IBeaconFilter(IndoorPositioningAdvertisingPacket.INDOOR_POSITIONING_UUID, UUID.fromString("021ed0cd-cbe2-413b-afa3-d57976202d10"));
 
     protected CoordinatorLayout coordinatorLayout;
 
